@@ -5,7 +5,7 @@
 
 
 int getNum(const std::string line); 
-int getStringNum(std::string line, std::string strnum[], int &outMax, int size, int &outNum1, int &outNum2);
+int getStringNum(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum);
 
 int main(int argc, char **argv) {
     std::string line;
