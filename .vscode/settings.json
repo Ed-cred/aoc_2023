@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.tmpl": "gotmpl",
+    "*.page.tmpl": "gohtml",
+    "*.layout.tmpl": "gohtml",
+    "xstring": "cpp"
+  }
+}
