@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
         while (getline(myFile, line)) {
             num = getNum(line);
             std::cout << line << ": " << num << '\n';
+            std::cout << std::endl;
             sum += num;
         }
         myFile.close();
@@ -45,34 +46,31 @@ int getNum(std::string line) {
    int digit2 = 0;
    int j = line.size() - 1;
    int i = 0;
-    int max = 0;
-    size_t found1 = getStringNum(line, strnum, max, size, outNum1, outNum2);
+    int found2 = 0;
+    size_t found1 = getStringNum(line, strnum, found2, size, outNum1, outNum2);
     std::cout << "First word index: " << found1  << " represents -> " << outNum1 << std::endl;
-    std::cout << "Last word index: " << max  << " represents -> " << outNum2 << std::endl;
+    std::cout << "Last word index: " << found2  << " represents -> " << outNum2 << std::endl;
+
     while (i <= j) {
         if (digit1 == 0 || digit2 == 0) {
-            if (line[i] >= 48 && line[i] <= 57) {
-                if (i < found1) {
+            if (i < found1 || outNum1 == 0) {
+                if (line[i] >= 48 && line[i] <= 57) {
                     digit1 = line[i] - '0';
-                } else if ( i == found1) {
-                    digit1 = outNum1;
                 } else {
-                    digit1 = outNum1;
+                    i++;
                 }
             } else {
-                i++;
+                digit1 = outNum1;
             }
-            if (line[j] >= 48 && line[j] <= 57) {
-                if (j > max) {
+            if (j > found2 || outNum2 == 0) {
+                if (line[j] >= 48 && line[j] <= 57) {
                     digit2 = line[j] - '0';
-                } else if ( j == max) {
-                    digit2 = outNum2;
                 } else {
-                    digit2 = outNum2;
+                    j--;
                 }
             } else {
-                j--;
-            } 
+                digit2 = outNum2;
+            }
         } else {
             break;
         }
@@ -81,17 +79,19 @@ int getNum(std::string line) {
     return result;
 }
 
-int getStringNum(std::string line, std::string strnum[], int &outMax, int size, int &outNum1, int &outNum2) {
+int getStringNum(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum2) {
     std::unordered_map<int, int> words;
     size_t found;
+    size_t pos = 0;
     for (int i = 0; i < size; i++) {
-        found = line.find(strnum[i]);
-        if (found != std::string::npos) {
+        found = line.find(strnum[i], 0);
+        while (found != std::string::npos) {
             outNum1 = i + 1; 
             words[found] = outNum1;
+            found = line.find(strnum[i], found+1);
         }
     }
-    int min = size;
+    int min = line.size();
     int max = 0;
     for (auto i : words) {
         if (i.first < min ) {
@@ -101,8 +101,8 @@ int getStringNum(std::string line, std::string strnum[], int &outMax, int size, 
             max = i.first;
         }
     }
-    outMax = max;
-    outNum2 = words[max];
     outNum1 = words[min];
+    found2 = max;
+    outNum2 = words[max];
     return min;
 }
