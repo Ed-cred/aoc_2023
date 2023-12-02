@@ -1,24 +1,27 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <unordered_map>
+#include <vector>
 #include <algorithm> 
 
 
 //12 red; 13 green; 14 blue
-const int RED = 12;
-const int GREEN = 13;
-const int BLUE = 14;
+enum Color {
+    red,
+    green,
+    blue
+};
 
 int validateGame(std::string& line);
 bool validateSet(std::string& set); 
-bool matchCube(std::string& cube); 
+bool validateCube(std::string& cube); 
 //trim function from stack overflow
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
     }));
 }
+
 int main(int argc , char **argv) {
     std::string line;
     std::ifstream myFile;
@@ -48,6 +51,7 @@ int main(int argc , char **argv) {
 
 //If a game is valid return the ID of the game, otherwise return 0
 int validateGame(std::string& line) {
+   std::vector<int> minCubes = {0, 0, 0};
    std::string setDelimeter = ";";
    std::string gameDelimeter = ":";
 
@@ -71,39 +75,32 @@ int validateGame(std::string& line) {
    return id;
 }
 
-bool validateSet(std::string& set) {
+bool validateSet(std::string& set, std::vector<int>& minCubes) {
     std::string cubeDelimeter = ",";
     std::string cube;
     size_t pos = 0;
     while((pos = set.find(cubeDelimeter)) != std::string::npos) {
         cube = set.substr(0, pos);
-        if (matchCube(cube) == false) {
+        if (validateCube(cube) == false) {
             return false;
         }
         set.erase(0, pos + cubeDelimeter.length() + 1);
     }
     cube = set.substr(0, pos);
-    if (matchCube(cube) == false) {
+    if (validateCube(cube) == false) {
         return false;
     }
     return true;
 
 }
 
-bool matchCube(std::string& cube) {
+bool validateCube(std::string& cube, std::vector<int>& minCubes) {
     ltrim(cube);
     size_t posCube = 0;
     posCube = cube.find(' ');
     std::string strNum = cube.substr(0, posCube);
     // +1 because there is a space after every comma
     std::string color = cube.substr(posCube + 1, std::string::npos);
-    if (color == "blue" && stoi(strNum) > BLUE) {
-        return false;
-    } else if (color == "green" && stoi(strNum)  > GREEN) {
-        return false;
-    } else if (color == "red" && stoi(strNum)  > RED) {
-        return false;
-    }
     std::cout << strNum << " -> " << color << '\n';
     return true;
 }
