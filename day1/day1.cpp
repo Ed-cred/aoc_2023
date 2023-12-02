@@ -5,7 +5,7 @@
 
 
 int getNum(const std::string line); 
-int getStringNum(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum);
+int matchString(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum);
 
 int main(int argc, char **argv) {
     std::string line;
@@ -47,7 +47,7 @@ int getNum(std::string line) {
    int j = line.size() - 1;
    int i = 0;
     int found2 = 0;
-    size_t found1 = getStringNum(line, strnum, found2, size, outNum1, outNum2);
+    size_t found1 = matchString(line, strnum, found2, size, outNum1, outNum2);
     std::cout << "First word index: " << found1  << " represents -> " << outNum1 << std::endl;
     std::cout << "Last word index: " << found2  << " represents -> " << outNum2 << std::endl;
 
@@ -79,7 +79,7 @@ int getNum(std::string line) {
     return result;
 }
 
-int getStringNum(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum2) {
+int matchString(std::string line, std::string strnum[], int &found2, int size, int &outNum1, int &outNum2) {
     std::unordered_map<int, int> words;
     size_t found;
     size_t pos = 0;
