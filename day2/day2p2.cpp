@@ -13,8 +13,9 @@ enum Color {
 };
 
 int validateGame(std::string& line);
-bool validateSet(std::string& set); 
-bool validateCube(std::string& cube); 
+void validateSet(std::string& set, std::vector<int>& minCubes); 
+void validateCube(std::string& cube, std::vector<int>& minCubes); 
+
 //trim function from stack overflow
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
@@ -54,53 +55,61 @@ int validateGame(std::string& line) {
    std::vector<int> minCubes = {0, 0, 0};
    std::string setDelimeter = ";";
    std::string gameDelimeter = ":";
-
-   std::string token = line.substr(0, line.find(":"));
-   std::string strID = token.substr(5, line.find(":"));
-   int id = stoi(strID);
    
    line.erase(0, line.find(gameDelimeter) + gameDelimeter.length());
    size_t pos = 0;
+   std::string token;
    while ((pos = line.find(setDelimeter)) != std::string::npos) {
         token = line.substr(0, pos);
-        if (validateSet(token) == false) {
-            return 0;
-        }
+        validateSet(token, minCubes);
         line.erase(0, pos + setDelimeter.length());
    }
    token = line.substr(0, pos);
-   if (validateSet(token) == false) {
-        return 0;
+   validateSet(token, minCubes);
+   int power = 1;
+   for (auto& i : minCubes) {
+        power *= i;
    }
-   return id;
+   return power;
 }
 
-bool validateSet(std::string& set, std::vector<int>& minCubes) {
+void validateSet(std::string& set, std::vector<int>& minCubes) {
     std::string cubeDelimeter = ",";
     std::string cube;
     size_t pos = 0;
     while((pos = set.find(cubeDelimeter)) != std::string::npos) {
         cube = set.substr(0, pos);
-        if (validateCube(cube) == false) {
-            return false;
-        }
+        validateCube(cube, minCubes);
         set.erase(0, pos + cubeDelimeter.length() + 1);
     }
     cube = set.substr(0, pos);
-    if (validateCube(cube) == false) {
-        return false;
-    }
-    return true;
+    validateCube(cube, minCubes);
 
 }
 
-bool validateCube(std::string& cube, std::vector<int>& minCubes) {
+void validateCube(std::string& cube, std::vector<int>& minCubes) {
     ltrim(cube);
+    Color c;
     size_t posCube = 0;
     posCube = cube.find(' ');
     std::string strNum = cube.substr(0, posCube);
     // +1 because there is a space after every comma
     std::string color = cube.substr(posCube + 1, std::string::npos);
+    if (color == "red") {
+        c = red;
+        if (stoi(strNum) > minCubes[c] ) {
+            minCubes[c] = stoi(strNum);
+        }
+    } else if (color == "green") {
+        c = green;
+        if (stoi(strNum) > minCubes[c] ) {
+            minCubes[c] = stoi(strNum);
+        }
+    } else if (color == "blue") {
+        c = blue;
+        if (stoi(strNum) > minCubes[c] ) {
+            minCubes[c] = stoi(strNum);
+        }
+    }
     std::cout << strNum << " -> " << color << '\n';
-    return true;
 }
