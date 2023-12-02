@@ -93,7 +93,7 @@ int matchString(std::string line, std::string strnum[], int &found2, int size, i
     }
     int min = line.size();
     int max = 0;
-    for (auto i : words) {
+    for (auto& i : words) {
         if (i.first < min ) {
             min = i.first;
         }
