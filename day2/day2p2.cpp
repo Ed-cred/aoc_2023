@@ -50,7 +50,7 @@ int main(int argc , char **argv) {
     return 0;
 }
 
-//If a game is valid return the ID of the game, otherwise return 0
+//Returns the product of the min values of cubes
 int validateGame(std::string& line) {
    std::vector<int> minCubes = {0, 0, 0};
    std::string setDelimeter = ";";
