@@ -1,12 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 
 
 int main(int argc , char **argv) {
     std::string line;
     std::ifstream myFile;
-    int m[100][100];
+    int m[700][700];
     int i = 0;
     int n;
     if (argc < 2) {
@@ -37,12 +38,14 @@ int main(int argc , char **argv) {
     } else {
         std::cout << "Unable to open file" << std::endl;
     }
+    int sum = 0;
     bool ok = false;
-    int num;
     for (int i = 0; i < n; i++) {
+        bool okv[1000];
+        memset(okv, 0, sizeof(okv));
         for (int j = 0; j < n; j++) {
+            ok = false;
             if (m[i][j] != 0 && m[i][j] != -1) {
-                ok = false;
                 if (m[i-1][j-1] == -1 && i - 1 >= 0 && j - 1 >= 0) {
                     ok = true;
                 } else if (m[i-1][j] == -1 &&  i - 1 >= 0 ) {
@@ -61,18 +64,27 @@ int main(int argc , char **argv) {
                     ok = true;
                 }
                 if (ok) {
-                    num = m[i][j];
-                    while (m[i][j+1] > 0 && j + 1 < n) {
-                       num = (num * 10) + m[i][j+1];
-                       j++;
+                    okv[j] = true;
+                }
+                int k = j;
+                if (m[i][j-1] <= 0) {
+                    while (m[i][k+1] > 0 && k + 1 < n) {
+                        m[i][k+1] = (m[i][k] * 10) + m[i][k+1];
+                        if (okv[k]) {
+                            okv[k+1] = true;
+                        }
+                        k++;
                     }
-                    std::cout << m[i][j] << "index i: " << i << " index j: " << j << '\n';
-                    std::cout << num;
+                }
+
+                if (okv[j]) {
+                    if (m[i][j+1] <= 0) {
+                        sum += m[i][j];
+                    }
                 }
             }
         }
     }
+    std::cout << "Sum: " << sum << '\n';
     return 0;
 }
-
-
