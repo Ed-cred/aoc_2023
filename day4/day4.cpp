@@ -3,14 +3,16 @@
 #include <string>
 #include <cstring>
 
-int matchNum(std::string &line);
+void matchNum(std::string &line, int cardnum[], int& size);
+int totalCards(int cardnum[], int& size, int& cardcount); 
 // static inline void ltrim(std::string &s) {
 //     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
 //         return !std::isspace(ch);
 //     }));
 // }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     std::string line;
     std::ifstream myFile;
     if (argc < 2)
@@ -28,13 +30,23 @@ int main(int argc, char **argv) {
     }
 
     int sum = 0;
+    int cardnum[202];
+    int cardsize = sizeof(cardnum) / sizeof(cardnum[0]);
+    for (int i = 0; i < cardsize ; i++) {
+        if (i == 0) {
+            cardnum[i] = 0;
+        } else {
+            cardnum[i] = 1;
+        }
+    } 
+    int cardcount = 0;
     if (myFile.is_open())
     {
+        
         while (getline(myFile, line))
         {
-            int points = matchNum(line);
-            std::cout << "Card points -> " << points << '\n';
-            sum += points;
+            matchNum(line, cardnum, cardsize);
+            cardcount++;
         }
         myFile.close();
     }
@@ -42,26 +54,37 @@ int main(int argc, char **argv) {
     {
         std::cout << "Unable to open file" << std::endl;
     }
-    std::cout << "Sum: " << sum;
+    int cards = totalCards(cardnum, cardsize, cardcount);
+    std::cout << "Sum: " << cards;
     return 0;
 }
 
-int matchNum(std::string &line) {
-    int win[50];
+void matchNum(std::string &line, int cardnum[], int& size)
+{
+    int win[100];
     memset(win, 0, sizeof(win));
+
     int pos = line.find(": ");
+    std::string strID = line.substr(line.find(" "), line.find(":"));
+    int id = stoi(strID);
+    std::cout << "card id: " << id << std::endl;
+
+    std::string token = line.substr(0, pos);
     line.erase(0, pos + 2);
     pos = line.find('|');
     std::string winners = line.substr(0, pos);
     line.erase(0, pos + 2);
+
     std::string elfers = line.substr(0, std::string::npos);
-    int points = 0;
     std::string strnum;
-    for (int i = 0; i < winners.size(); i++) {
-        if (isdigit(winners[i])) {
+    for (int i = 0; i < winners.size(); i++)
+    {
+        if (isdigit(winners[i]))
+        {
             strnum = winners[i];
             int k = i;
-            while (isdigit(winners[i + 1]) && i + 1 < winners.size()) {
+            while (isdigit(winners[i + 1]) && i + 1 < winners.size())
+            {
                 strnum = strnum + winners[i + 1];
                 i++;
             }
@@ -72,35 +95,53 @@ int matchNum(std::string &line) {
         {
             continue;
         }
-        std::cout << win[i] << " at index " << i << std::endl;
     }
     std::string elfnum;
     int winsize = sizeof(win) / sizeof(win[0]);
-    for (int i = 0; i < elfers.size(); i++) {
-        if (isdigit(elfers[i])) {
+    int counter = 0;
+    int mlt = cardnum[id];
+    for (int i = 0; i < elfers.size(); i++)
+    {
+
+        if (isdigit(elfers[i]))
+        {
             elfnum = elfers[i];
             int k = i;
-            while (isdigit(elfers[i + 1]) && i + 1 < elfers.size()) {
+            while (isdigit(elfers[i + 1]) && i + 1 < elfers.size())
+            {
                 elfnum = elfnum + elfers[i + 1];
                 i++;
             }
             int num = stoi(elfnum);
-            for (int j = 0; j < winsize; j++) {
-                if (num == win[j]) {
-                    if (points >= 1) {
-                        points *= 2;
-                    }
-                    else {
-                        points = 1;
-                    }
+            for (int j = 0; j < winsize; j++)
+            {
+                if (num == win[j])
+                {
+                    counter++;
                 }
             }
             elfnum.clear();
         }
-        else {
+        else
+        {
             continue;
         }
     }
-    return points;
+    int rbound = id + counter;
+    if (rbound >= size)
+    {
+        rbound = size - 2;
+    }
+    for (int k = id + 1; k <= rbound; k++)
+    {
+        cardnum[k] += mlt;
+    }
 }
-// 3199 too low
+
+int totalCards(int cardnum[], int& size, int& cardcount) {
+    int sum = 0;
+    for (int i = 1; i <= cardcount; i++) {
+        sum += cardnum[i];
+    }
+    return sum;
+}
