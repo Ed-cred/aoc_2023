@@ -2,8 +2,9 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <algorithm>
 
-int matchString(std::string &line); 
+int matchString (std::string &line, std::unordered_map<int, int> map);
 void matchMap(std::string &line , std::unordered_map<int, int> map);
 
 int main(int argc, char **argv) {
@@ -24,8 +25,7 @@ int main(int argc, char **argv) {
     std::unordered_map<int,int> map;
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
-            std::cout << line << '\n'; 
-            matchString(line);
+            matchString(line, map);
         }
         myFile.close();
     }
@@ -51,13 +51,22 @@ int matchString (std::string &line, std::unordered_map<int, int> map) {
 
 void matchMap(std::string &line , std::unordered_map<int, int> map) {
     int pos = line.find(' ');
-    int dest = stoi(line.substr(0, pos));
+    std::string d = line.substr(0, pos);
+    int dest = stoi(d);
+    std::cout << dest << std::endl;
     line.erase(0, pos + 1);
-    int  src = stoi(line.substr(0,pos));
+    std::string  s = line.substr(0,pos);
+    int src = stoi(s);
+    std::cout << src << std::endl;
     line.erase(0, pos + 1);
-    int len = stoi(line.substr(0, std::string::npos));
-    for (int i = 0; i < len; i++) {
-
+    std::string l = line.substr(0, std::string::npos);
+    int len = stoi(l);
+    // for (int i = 0; i < len; i++) {
+    //     map[src] = dest;
+    //     src++;
+    //     dest++;
+    //  }
+    for (auto& i: map) {
+        std::cout << i.first << " " << i.second << std::endl;
     }
-
 }
