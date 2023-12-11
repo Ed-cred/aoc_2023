@@ -3,14 +3,14 @@
 #include <string>
 #include <vector>
 
-void matchString (std::string &line, std::vector<int>& loc, std::vector<int>& copy);
-void matchMap(std::string &line, std::vector<int>& loc, std::vector<int>& copy);
+void matchString (std::string &line, std::vector<double>& loc, std::vector<double>& copy);
+void matchMap(std::string &line, std::vector<double>& loc, std::vector<double>& copy);
 
 int main() {
     std::string line;
-    std::ifstream myFile("test.txt");
-    std::vector<int> loc;
-    std::vector<int> copy;
+    std::ifstream myFile("input.txt");
+    std::vector<double> loc;
+    std::vector<double> copy;
 
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
@@ -20,20 +20,25 @@ int main() {
     } else {
         std::cout << "Unable to open file" << std::endl;
     }
-    for(int i : copy) {
+    int min = INT_MAX;
+    for(auto& i : copy) {
+        if (min > i) {
+            min = i;
+        }
         std::cout << i << std::endl;
     }
+    std::cout << min;
     return 0;
 }
 
 
-void matchString (std::string &line, std::vector<int>& loc, std::vector<int>& copy) {
+void matchString (std::string &line, std::vector<double>& loc, std::vector<double>& copy) {
     int pos = line.find(':');
     std::string token = line.substr(0, pos);
     if (token == "seeds") {
         std::string seeds = line.substr(pos + 2, std::string::npos);
         size_t pos = 0;
-        int token;
+        double token;
         int i = 0;
         while((pos = seeds.find(' ')) != std::string::npos) {
             token = stoi(seeds.substr(0, pos));
@@ -44,31 +49,32 @@ void matchString (std::string &line, std::vector<int>& loc, std::vector<int>& co
         token = stoi(seeds.substr(0, pos));
         loc.push_back(token);
         for(auto& i : loc) {
-            std::cout << i << std::endl;
+            // std::cout << i << std::endl;
             copy.push_back(i);
         }
     } else if (isdigit(line[0])) {
         matchMap(line, loc, copy);
-    } else if ((pos = line.find(':')) + 1 == std::string::npos) {
-        for(auto& i : copy) {
-            loc.push_back(i);
+    } else {
+        for(double i = 0; i < loc.size(); i ++) {
+            loc[i] = copy[i];
         }
+
     }
 }
 
-void matchMap(std::string &line, std::vector<int>& loc, std::vector<int>& copy)  {
-    int pos = line.find(' ');
-    int dest = stoi(line.substr(0, pos));
+void matchMap(std::string &line, std::vector<double>& loc, std::vector<double>& copy)  {
+    size_t pos = line.find(' ');
+    double dest = stoi(line.substr(0, pos));
     line.erase(0, pos + 1);
     pos = line.find(' ');
-    int  src = stoi(line.substr(0,pos));
+    double  src = stoi(line.substr(0,pos));
     line.erase(0, pos + 1);
     pos = line.find(' ');
-    int len = stoi(line.substr(0, std::string::npos));
-    for (int i = 0; i < len; i++) {
-        for(int j = 0; j < loc.size(); j++) {
+    double len = stoi(line.substr(0, std::string::npos));
+    for (double i = 0; i < len; i++) {
+        for(double j = 0; j < loc.size(); j++) {
             if(loc[j] == src) {
-                std::cout << "I'm here" << " " << src << " " << dest << std::endl;
+                // std::cout << "I'm here" << " " << src << " " << dest << std::endl;
                 copy[j] = dest;
                 break;
             }
