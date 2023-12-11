@@ -1,21 +1,20 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <unordered_map>
-#include <algorithm>
 
-int matchString (std::string &line, std::unordered_map<int, int> map);
-void matchMap(std::string &line , std::unordered_map<int, int> map);
-void setMap(std::unordered_map<int, int>& map); 
+int matchString (std::string &line, std::unordered_map<int, std::vector<int>>& seedsMap);
+void matchMap(std::string &line , std::unordered_map<int, std::vector<int>>& seedsMap);
 
 int main() {
     std::string line;
     std::ifstream myFile("test.txt");
-    std::unordered_map<int,int> map;
+    std::unordered_map<int, std::vector<int>> seedsMap;
 
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
-            matchString(line, map);
+            matchString(line, seedsMap);
         }
         myFile.close();
     } else {
@@ -24,27 +23,31 @@ int main() {
     return 0;
 }
 
-int matchString (std::string &line, std::unordered_map<int, int> map) {
+int matchString (std::string &line, std::unordered_map<int, std::vector<int>>& seedsMap) {
     int pos = line.find(':');
     std::string token = line.substr(0, pos);
     if (token == "seeds") {
         std::string seeds = line.substr(pos + 2, std::string::npos);
-        std::cout << "Seeds: " << seeds << std::endl;
-    } else if(int pos = line.find(':'); pos + 1 == std::string::npos) {
-        setMap(map);
+        size_t pos = 0;
+        int token;
+        while((pos = seeds.find(' ')) != std::string::npos) {
+            token = stoi(seeds.substr(0, pos));
+            seedsMap[token];
+            seeds.erase(0, pos+1);
+        }
+        token = stoi(seeds.substr(0, pos));
+        seedsMap[token];
+
+        for(auto& [k, _] : seedsMap) {
+            std::cout << k << ' ';
+        }
     } else if (isdigit(line[0])) {
-        matchMap(line, map);
+        matchMap(line, seedsMap);
     } 
     return 0;
 }
 
-void setMap(std::unordered_map<int, int>& map) {
-    for (int i = 0; i < 100; i++) {
-        map[i] = i;
-    }
-}
-
-void matchMap(std::string &line , std::unordered_map<int, int> map) {
+void matchMap(std::string &line , std::unordered_map<int, std::vector<int>>& seedsMap) {
     int pos = line.find(' ');
     int dest = stoi(line.substr(0, pos));
     line.erase(0, pos + 1);
@@ -54,11 +57,12 @@ void matchMap(std::string &line , std::unordered_map<int, int> map) {
     pos = line.find(' ');
     int len = stoi(line.substr(0, std::string::npos));
     for (int i = 0; i < len; i++) {
-        map[src] = dest;
+        if (seedsMap.find(src) != seedsMap.end()) {
+        seedsMap[src].push_back(dest);
         src++;
         dest++;
     }
-    for (auto& i: map) {
-        std::cout << "Seed: " << i.first << " " << "Soil: " <<  i.second << std::endl;
-    }
+    // for (auto& i: map) {
+    //     std::cout << "Seed: " << i.first << " " << "Soil: " <<  i.second << std::endl;
+    // }
 }
