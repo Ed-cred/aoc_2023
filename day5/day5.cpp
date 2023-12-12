@@ -74,19 +74,9 @@ void matchMap(std::string &line, std::vector<size_t>& loc, std::vector<size_t>& 
     line.erase(0, pos + 1);
     pos = line.find(' ');
     size_t len = stoll(line.substr(0, std::string::npos));
-    size_t first = loc.front();
-    if(src <= first || first < src + len) {
-        for (size_t i = 0; i < len; i++) {
-            for(size_t j = 0; j < loc.size(); j++) {
-                if(loc[j] == src) {
-                    // std::cout << "I'm here" << " " << src << " " << dest << std::endl;
-                    copy[j] = dest;
-                    break;
-                }
-            }
-            size_t dif = loc.back() - src;
-            src ++ ;
-            dest ++ ;
+    for(size_t j = 0; j < loc.size(); j++) {
+        if (src < loc[j]  && loc[j] < src + len) {
+            copy[j] = dest + (loc[j] - src);
         }
     }
 }
