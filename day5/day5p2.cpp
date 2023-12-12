@@ -27,7 +27,6 @@ int main() {
         if (min > i) {
             min = i;
         }
-        // std::cout << i << std::endl;
     }
     std::cout << min;
     return 0;
@@ -40,17 +39,22 @@ void matchString (std::string &line, std::vector<size_t>& loc, std::vector<size_
     if (token == "seeds") {
         std::string seeds = line.substr(pos + 2, std::string::npos);
         size_t pos = 0;
-        size_t token;
+        size_t seed;
+        size_t range;
         int i = 0;
         while((pos = seeds.find(' ')) != std::string::npos) {
-            token = stoll(seeds.substr(0, pos));
-            loc.push_back(token);
-            seeds.erase(0, pos+1);
+            seed = stoll(seeds.substr(0, pos));
+            seeds.erase(0, pos + 1);
+            pos = seeds.find(' ');
+            range = stoll(seeds.substr(0, pos));
+            seeds.erase(0, pos + 1);
             i++;
+            for(size_t i = 0; i < range; i ++) {
+                std::cout << "Pos: " << seed << std::endl;
+                loc.push_back(seed);
+                seed++;
+            }
         }
-        token = stoll(seeds.substr(0, pos));
-        loc.push_back(token);
-        std::sort(loc.begin(), loc.end());
         for(auto& i : loc) {
             // std::cout << i << std::endl;
             copy.push_back(i);
