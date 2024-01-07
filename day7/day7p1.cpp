@@ -21,8 +21,7 @@ struct Hand {
 };
 
 Hand matchHand(std::string &line); 
-bool sortRank(Hand& h1, Hand& h2); 
-void compare(std::vector<Hand> &hand); 
+void sortRank(std::vector<Hand> &hand); 
 
 std::string labels = "AKQJT98765432";
 
@@ -42,7 +41,7 @@ int main() {
         std::cout << "Unable to open file" << std::endl;
     }
     // std::sort(game.begin(), game.end(), &sortRank);
-    compare(game);
+    sortRank(game);
     for(int i =0 ; i < game.size(); i++) {
         std::cout << game[i].cards << "->" << game[i].type << "->" << game[i].bid << std::endl;
         result += (game[i].bid * (i+1));
@@ -91,23 +90,7 @@ Hand matchHand(std::string &line) {
    return currHand;
 }
 
-//my first custom sort in cpp 
-// bool sortRank(Hand& h1, Hand& h2) {
-//     if(h1.type == h2.type) {
-//         for (int j = 0; j < 5; ++j) {
-//             if (labels.find(h1.cards[j]) < labels.find(h2.cards[j])) {
-//                 return h1.type < h2.type;
-//             } else if (labels.find(h1.cards[j]) > labels.find(h2.cards[j])) {
-//                 return h1.type > h2.type;
-//             } 
-//         }
-//     } else if(h1.type > h2.type) {
-//         return h1.type < h2.type;
-//     } 
-//     return h1.type > h2.type;
-// }
-//5 3 7 2 1
-void compare(std::vector<Hand> &hand) {
+void sortRank(std::vector<Hand> &hand) {
     bool ok = true;
     do {
         ok = true;
