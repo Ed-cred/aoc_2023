@@ -21,13 +21,13 @@ struct Hand {
 };
 
 Hand matchHand(std::string &line); 
-bool sortRank(Hand& h1, Hand& h2); 
+void sortRank(std::vector<Hand> &hand); 
 
 std::string labels = "AKQJT98765432";
 
 int main() {
     std::string line;
-    std::ifstream myFile("test.txt");
+    std::ifstream myFile("input.txt");
     std::vector<Hand> game;
     int result = 0;
 
@@ -40,8 +40,8 @@ int main() {
     } else {
         std::cout << "Unable to open file" << std::endl;
     }
-    std::sort(game.begin(), game.end(), &sortRank);
-
+    // std::sort(game.begin(), game.end(), &sortRank);
+    sortRank(game);
     for(int i =0 ; i < game.size(); i++) {
         std::cout << game[i].cards << "->" << game[i].type << "->" << game[i].bid << std::endl;
         result += (game[i].bid * (i+1));
@@ -89,18 +89,26 @@ Hand matchHand(std::string &line) {
    }
    return currHand;
 }
-//my first custom sort in cpp 
-bool sortRank(Hand& h1, Hand& h2) {
-    if(h1.type == h2.type) {
-        for (int j = 0; j < 5; ++j) {
-            if (labels.find(h1.cards[j]) < labels.find(h2.cards[j])) {
-                return h1.type > h2.type;
-            } else if (labels.find(h1.cards[j]) > labels.find(h2.cards[j])) {
-                return h2.type > h1.type;
+
+void sortRank(std::vector<Hand> &hand) {
+    bool ok = true;
+    do {
+        ok = true;
+        for (int i = 0; i < hand.size(); ++i) {
+            if(i+1 < hand.size() && hand[i].type == hand[i+1].type) {
+                    for (int j = 0; j < 5; j++) {
+                        if (labels.find(hand[i].cards[j]) < labels.find(hand[i+1].cards[j])) {
+                            std::swap(hand[i], hand[i+1]);
+                            ok = false;
+                            break;
+                        } else if (labels.find(hand[i].cards[j]) > labels.find(hand[i+1].cards[j])){
+                            break;
+                        }                 
+                    }
+            } else if (hand[i].type > hand[i+1].type && i + 1 < hand.size()) {
+                std::swap(hand[i], hand[i+1]);
+                ok = false;
             }
         }
-    } else if(h1.type > h2.type) {
-        return h1.type > h2.type;
-    } 
-    return h2.type > h1.type;
+    } while (!ok);
 }
