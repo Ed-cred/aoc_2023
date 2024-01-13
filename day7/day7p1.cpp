@@ -21,15 +21,15 @@ struct Hand {
 };
 
 Hand matchHand(std::string &line); 
-void sortRank(std::vector<Hand> &hand); 
+// void sortRank(std::vector<Hand> &hand); 
 
 std::string labels = "AKQJT98765432";
 
 int main() {
     std::string line;
-    std::ifstream myFile("input.txt");
+    std::ifstream myFile("test.txt");
     std::vector<Hand> game;
-    int result = 0;
+    size_t result = 0;
 
     if (myFile.is_open()) {
         while (getline(myFile, line)) {
@@ -40,13 +40,28 @@ int main() {
     } else {
         std::cout << "Unable to open file" << std::endl;
     }
-    // std::sort(game.begin(), game.end(), &sortRank);
-    sortRank(game);
-    for(int i =0 ; i < game.size(); i++) {
+    
+     std::sort(game.begin(), game.end(), [](Hand a, Hand b) {
+        if (a.type == b.type) {
+         for (int j = 0; j < 5; j++) {
+            if (labels.find(a.cards[j]) < labels.find(b.cards[j])) {
+                return false;
+            } else if (labels.find(a.cards[j]) > labels.find(b.cards[j])) {
+                return true;
+            }
+         } 
+        } else if (a.type > b.type) {
+            return false;
+        }    
+        return true;
+     });
+
+    // sortRank(game);
+    for(int i = 0 ; i < game.size(); i++) {
         std::cout << game[i].cards << "->" << game[i].type << "->" << game[i].bid << std::endl;
         result += (game[i].bid * (i+1));
     }
-        // std::cout << i.cards << "->" << i.bid  << "->" << i.type << std::endl;
+    // aiming for this -> 254115617
     std::cout << result << std::endl;
     return 0;
 }
@@ -90,25 +105,26 @@ Hand matchHand(std::string &line) {
    return currHand;
 }
 
-void sortRank(std::vector<Hand> &hand) {
-    bool ok = true;
-    do {
-        ok = true;
-        for (int i = 0; i < hand.size(); ++i) {
-            if(i+1 < hand.size() && hand[i].type == hand[i+1].type) {
-                    for (int j = 0; j < 5; j++) {
-                        if (labels.find(hand[i].cards[j]) < labels.find(hand[i+1].cards[j])) {
-                            std::swap(hand[i], hand[i+1]);
-                            ok = false;
-                            break;
-                        } else if (labels.find(hand[i].cards[j]) > labels.find(hand[i+1].cards[j])){
-                            break;
-                        }                 
-                    }
-            } else if (hand[i].type > hand[i+1].type && i + 1 < hand.size()) {
-                std::swap(hand[i], hand[i+1]);
-                ok = false;
-            }
-        }
-    } while (!ok);
-}
+// probably should find a more efficient sort than this one 
+// void sortRank(std::vector<Hand> &hand) {
+//     bool ok = true;
+//     do {
+//         ok = true;
+//         for (int i = 0; i < hand.size(); ++i) {
+//             if(i+1 < hand.size() && hand[i].type == hand[i+1].type) {
+//                     for (int j = 0; j < 5; j++) {
+//                         if (labels.find(hand[i].cards[j]) < labels.find(hand[i+1].cards[j])) {
+//                             std::swap(hand[i], hand[i+1]);
+//                             ok = false;
+//                             break;
+//                         } else if (labels.find(hand[i].cards[j]) > labels.find(hand[i+1].cards[j])){
+//                             break;
+//                         }                 
+//                     }
+//             } else if (hand[i].type > hand[i+1].type && i + 1 < hand.size()) {
+//                 std::swap(hand[i], hand[i+1]);
+//                 ok = false;
+//             }
+//         }
+//     } while (!ok);
+// }
