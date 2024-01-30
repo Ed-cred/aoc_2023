@@ -21,7 +21,7 @@ template <>
 struct std::hash<Position> {
   std::size_t operator()(const Position& p) const {
     std::size_t h1 = std::hash<int64_t>{}(p.row);
-    std::size_t h2 = std::hash<int64_t>{}(p.row);
+    std::size_t h2 = std::hash<int64_t>{}(p.col);
     return h1 ^ (h2 << 1);
   }
 };
@@ -42,7 +42,7 @@ std::string readFile2(const std::string& fileName) {
 }
 
 int main() {
-  std::string contents = readFile2("test.txt");
+  std::string contents = readFile2("input.txt");
   int64_t result = numberOfSteps(contents);
   std::cout << result << std::endl;
   return 0;
@@ -51,8 +51,8 @@ int main() {
 int64_t numberOfSteps(std::string_view maze) {
   std::vector<std::string_view> grid;
   std::ranges::copy(
-      maze | std::views::split('\n') | std::views::transform([](auto&& rng) {
-        return std::string_view(rng.begin(), rng.end());
+      maze | std::views::split('\n') | std::views::transform([](auto&& range) {
+        return std::string_view(range.begin(), range.end());
       }),
       std::back_inserter(grid));  // constructing an array of strings
 
